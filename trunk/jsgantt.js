@@ -520,6 +520,10 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       var vShowDur  = 1;
 
       var vShowComp = 1;
+	  
+	  var vShowStartDate = 1;
+      
+	  var vShowEndDate = 1;
 
       var vNumUnits  = 0;
 
@@ -562,6 +566,10 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       this.setShowDur  = function(pShow) { vShowDur  = pShow; };
 
       this.setShowComp = function(pShow) { vShowComp = pShow; };
+	  
+	  this.setShowStartDate = function(pShow) { vShowStartDate = pShow; };
+	  
+	  this.setShowEndDate = function(pShow) { vShowEndDate = pShow; };
 
       this.setFormat = function(pFormat){ 
          vFormat = pFormat; 
@@ -576,7 +584,10 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       this.getShowDur  = function(){ return vShowDur };
 
       this.getShowComp = function(){ return vShowComp };
-
+	  
+	  this.getShowStartDate = function(){ return vShowStartDate };
+	  
+	  this.getShowEndDate = function(){ return vShowEndDate };
 
       this.CalcTaskXY = function () 
 
@@ -807,7 +818,8 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
 
          var vStatusWidth = 70;
 
-         var vLeftWidth = 15 + 220 + 70 + 70 + 70;
+         var vLeftWidth = 15 + 220 + 70 + 70 + 70 + 70 + 70;
+		 
 
       if(vTaskList.length > 0)
 
@@ -885,7 +897,8 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
          if(vShowRes !=1) vNameWidth+=vStatusWidth;
          if(vShowDur !=1) vNameWidth+=vStatusWidth;
          if(vShowComp!=1) vNameWidth+=vStatusWidth;
-
+		 if(vShowStartDate!=1) vNameWidth+=vStatusWidth;
+		 if(vShowEndDate!=1) vNameWidth+=vStatusWidth;
          // DRAW the Left-side of the chart (names, resources, comp%)
 
          vLeftTable =
@@ -901,6 +914,8 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
            if(vShowRes ==1) vLeftTable += '  <TD style="WIDTH: ' + vStatusWidth + 'px; HEIGHT: 17px"></TD>' ;
            if(vShowDur ==1) vLeftTable += '  <TD style="WIDTH: ' + vStatusWidth + 'px; HEIGHT: 17px"></TD>' ;
            if(vShowComp==1) vLeftTable += '  <TD style="WIDTH: ' + vStatusWidth + 'px; HEIGHT: 17px"></TD>' ;
+			if(vShowStartDate==1) vLeftTable += '  <TD style="WIDTH: ' + vStatusWidth + 'px; HEIGHT: 17px"></TD>' ;
+			if(vShowEndDate==1) vLeftTable += '  <TD style="WIDTH: ' + vStatusWidth + 'px; HEIGHT: 17px"></TD>' ;
 
            vLeftTable +=
            '<TR style="HEIGHT: 20px">' +
@@ -913,6 +928,11 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
            if(vShowDur ==1) vLeftTable += '  <TD style="BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid; WIDTH: 60px; HEIGHT: 20px" align=center nowrap>Duration</TD>' ;
            if(vShowComp==1) vLeftTable += '  <TD style="BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid; WIDTH: 60px; HEIGHT: 20px" align=center nowrap>% Comp.</TD>' ;
 
+ if(vShowStartDate==1) vLeftTable += '  <TD style="BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid; WIDTH: 60px; HEIGHT: 20px" align=center nowrap>Start Date</TD>' ;
+ 
+ if(vShowEndDate==1) vLeftTable += '  <TD style="BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid; WIDTH: 60px; HEIGHT: 20px" align=center nowrap>End Date</TD>' ;
+ 
+ 
            vLeftTable += '</TR>';
 
 
@@ -971,6 +991,13 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
               if(vShowDur ==1) vLeftTable += '  <TD class=gname style="WIDTH: 60px; HEIGHT: 20px; TEXT-ALIGN: center; BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid;" align=center><NOBR>' + vTaskList[i].getDuration(vFormat) + '</NOBR></TD>' ;
 
               if(vShowComp==1) vLeftTable += '  <TD class=gname style="WIDTH: 60px; HEIGHT: 20px; TEXT-ALIGN: center; BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid;" align=center><NOBR>' + vTaskList[i].getCompStr()  + '</NOBR></TD>' ;
+
+
+              if(vShowStartDate==1) vLeftTable += '  <TD class=gname style="WIDTH: 60px; HEIGHT: 20px; TEXT-ALIGN: center; BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid;" align=center><NOBR>' + vTaskList[i].getStart().getMonth() + '/' + vTaskList[i].getStart().getDate() + '/' + vTaskList[i].getStart().getFullYear().toString().substring(2,4)  + '</NOBR></TD>' ;
+			  
+			  
+              if(vShowEndDate==1) vLeftTable += '  <TD class=gname style="WIDTH: 60px; HEIGHT: 20px; TEXT-ALIGN: center; BORDER-TOP: #efefef 1px solid; FONT-SIZE: 12px; BORDER-LEFT: #efefef 1px solid;" align=center><NOBR>' + vTaskList[i].getEnd().getMonth()+ '/' + vTaskList[i].getEnd().getDate() + '/' + vTaskList[i].getEnd().getFullYear().toString().substring(2,4)  + '</NOBR></TD>' ;
+
 
               vLeftTable += '</TR>';
 
