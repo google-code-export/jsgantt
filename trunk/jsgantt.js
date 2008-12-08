@@ -90,7 +90,7 @@ JSGantt.TaskItem = function(pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes
       this.getColor    = function(){ return vColor};
       this.getLink     = function(){ return vLink };
       this.getMile     = function(){ return vMile };
-	   this.getDepend   = function(){ return vDepend };
+	  this.getDepend   = function(){ return vDepend };
       this.getCaption  = function(){ if(vCaption) return vCaption; else return ''; };
       this.getResource = function(){ if(vRes) return vRes; else return '&nbsp';  };
       this.getCompVal  = function(){ if(vComp) return vComp; else return 0; };
@@ -186,10 +186,10 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       this.setShowRes  = function(pShow) { vShowRes  = pShow; };
       this.setShowDur  = function(pShow) { vShowDur  = pShow; };
       this.setShowComp = function(pShow) { vShowComp = pShow; };
-	   this.setShowStartDate = function(pShow) { vShowStartDate = pShow; };
-	   this.setShowEndDate = function(pShow) { vShowEndDate = pShow; };
-	   this.setDateInputFormat = function(pShow) { vDateInutFormat = pShow; };
-	   this.setDateDisplayFormat = function(pShow) { vDateDisplayFormat = pShow; };
+	  this.setShowStartDate = function(pShow) { vShowStartDate = pShow; };
+	  this.setShowEndDate = function(pShow) { vShowEndDate = pShow; };
+	  this.setDateInputFormat = function(pShow) { vDateInutFormat = pShow; };
+	  this.setDateDisplayFormat = function(pShow) { vDateDisplayFormat = pShow; };
       this.setCaptionType = function(pType) { vCaptionType = pType };
       this.setFormat = function(pFormat){ 
          vFormat = pFormat; 
@@ -1463,10 +1463,14 @@ JSGantt.AddXMLTask = function(pGanttVar){
 			try { pDepend = Task[i].getElementsByTagName("pDepend")[0].childNodes[0].nodeValue;
 			} catch (error) { pDepend =0;}
 			pDepend *= 1;
-			if (pDepend==0){pDepend='x'} // need this to draw the dependency lines
+			if (pDepend==0){pDepend=''} // need this to draw the dependency lines
+			
+			try { pCaption = Task[i].getElementsByTagName("pCaption")[0].childNodes[0].nodeValue;
+			} catch (error) { pCaption ="";}
+			
 			
 			// Finally add the task
-			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend));
+			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend,pCaption));
 		}
 	}
 }
@@ -1533,13 +1537,15 @@ JSGantt.ChromeXMLParse = function (pGanttVar){
 			pOpen *= 1;
 	
 			var te = Task.split(/<pDepend>/i)
-			if(te.length> 2){var pDepend=te[1];} else {var pDepend = "x";}	
+			if(te.length> 2){var pDepend=te[1];} else {var pDepend = "";}	
 			pDepend *= 1;
-			if (pDepend==0){pDepend='x'} // need this to draw the dependency lines
+			if (pDepend==0){pDepend=''} // need this to draw the dependency lines
 			
+			var te = Task.split(/<pCaption>/i)
+			if(te.length> 2){var pCaption=te[1];} else {var pCaption = "";}
 			
 			// Finally add the task
-			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend));
+			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend,pCaption));
 		}
 	}
 }

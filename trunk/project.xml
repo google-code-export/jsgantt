@@ -17,8 +17,8 @@
 <task>
 	<pID>20</pID>
 	<pName>Move to WCF from remoting</pName>
-	<pStart>8/11/2008</pStart>
-	<pEnd>8/15/2008</pEnd>
+	<pStart>9/11/2008</pStart>
+	<pEnd>9/15/2008</pEnd>
 	<pColor>0000ff</pColor>
 	<pLink></pLink>
 	<pMile>0</pMile>
@@ -28,12 +28,13 @@
 	<pParent>10</pParent>
 	<pOpen>1</pOpen>
 	<pDepend></pDepend>
+	<pCaption>Brian</pCaption>
 </task>
 <task>
 	<pID>30</pID>
 	<pName>add Auditing</pName>
-	<pStart>8/19/2008</pStart>
-	<pEnd>8/21/2008</pEnd>
+	<pStart>9/19/2008</pStart>
+	<pEnd>9/21/2008</pEnd>
 	<pColor>0000ff</pColor>
 	<pLink></pLink>
 	<pMile>0</pMile>
@@ -43,5 +44,6 @@
 	<pParent>10</pParent>
 	<pOpen>1</pOpen>
 	<pDepend>20</pDepend>
+	<pCaption>Shlomy</pCaption>
 </task>
 </project>
