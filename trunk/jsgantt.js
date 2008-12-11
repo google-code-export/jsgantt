@@ -90,7 +90,7 @@ JSGantt.TaskItem = function(pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes
       this.getColor    = function(){ return vColor};
       this.getLink     = function(){ return vLink };
       this.getMile     = function(){ return vMile };
-	  this.getDepend   = function(){ return vDepend };
+      this.getDepend   = function(){ if(vDepend) return vDepend; else return null };
       this.getCaption  = function(){ if(vCaption) return vCaption; else return ''; };
       this.getResource = function(){ if(vRes) return vRes; else return '&nbsp';  };
       this.getCompVal  = function(){ if(vComp) return vComp; else return 0; };
@@ -160,7 +160,7 @@ JSGantt.TaskItem = function(pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes
   // pShowRes: UNUSED - future use to turn on/off display of resource names
   // pShowDur: UNUSED - future use to turn on/off display of task durations
   // pFormat: (required) - used to indicate whether chart should be drawn in "day", "week", "month", or "quarter" format
-  //pCationType - what type of Caption to show:  Caption, Resource, Duration, Complete
+  // pCationType - what type of Caption to show:  Caption, Resource, Duration, Complete
 JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
 {
 
@@ -268,6 +268,7 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
 	this.DrawDependencies = function ()
    {
 		//First recalculate the x,y
+
 		this.CalcTaskXY();
 
 		var gr = this.getGraphics();
@@ -330,7 +331,6 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       var vNameWidth = 220;	
       var vStatusWidth = 70;
       var vLeftWidth = 15 + 220 + 70 + 70 + 70 + 70 + 70;
-
 
       if(vTaskList.length > 0)
       {
@@ -468,6 +468,8 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
 
             if (vFormat=='quarter') vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="quarter" checked>Quarter';
             else                vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("quarter",'+vGanttVar+') VALUE="quarter">Quarter';
+
+//            vLeftTable += '<INPUT TYPE=RADIO NAME="other" VALUE="other" style="display:none"> .';
 
             vLeftTable += '</TD></TR></TBODY></TABLE></TD>';
 
@@ -701,13 +703,28 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
                vTaskRight = 1
 
   	            vRightTable +=
-                  '<div id=bardiv_' + vID + ' style="position:absolute; top:0px; left:' + Math.ceil((vTaskLeft * (vDayWidth) + 1)) + 'px; height: 16px; width:12px; overflow:hidden;">' +
-                  '<div id=taskbar_' + vID + ' title="' + vTaskList[i].getName() + ': ' + vDateRowStr + '" style="height: 16px; width:12px; overflow:hidden; cursor: pointer;" onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200);>';
+                  '<div id=bardiv_' + vID + ' style="position:absolute; top:0px; left:' + Math.ceil((vTaskLeft * (vDayWidth) + 1)) + 'px; height: 18px; width:160px; overflow:hidden;">' +
+                  '  <div id=taskbar_' + vID + ' title="' + vTaskList[i].getName() + ': ' + vDateRowStr + '" style="height: 16px; width:12px; overflow:hidden; cursor: pointer;" onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200);>';
 
                if(vTaskList[i].getCompVal() < 100)
- 		            vRightTable += '&loz;</div></div>' ;
+ 		            vRightTable += '&loz;</div>' ;
                else
- 		            vRightTable += '&diams;</div></div>' ;
+ 		            vRightTable += '&diams;</div>' ;
+
+                        if( g.getCaptionType() ) {
+                           vCaptionStr = '';
+                           switch( g.getCaptionType() ) {           
+                              case 'Caption':    vCaptionStr = vTaskList[i].getCaption();  break;
+                              case 'Resource':   vCaptionStr = vTaskList[i].getResource();  break;
+                              case 'Duration':   vCaptionStr = vTaskList[i].getDuration(vFormat);  break;
+                              case 'Complete':   vCaptionStr = vTaskList[i].getCompStr();  break;
+		                     }
+                           //vRightTable += '<div style="FONT-SIZE:12px; position:absolute; left: 6px; top:1px;">' + vCaptionStr + '</div>';
+                           vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:2px; width:120px; left:12px">' + vCaptionStr + '</div>';
+	                  }
+
+  	            vRightTable += '</div>';
+
 
             } else {
 
@@ -737,19 +754,33 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
                         '<div style="Z-INDEX: -4; float:left; background-color:#000000; height:2px; overflow: hidden; width:1px;"></div>' +
                         '<div style="Z-INDEX: -4; float:right; background-color:#000000; height:2px; overflow: hidden; width:1px;"></div>' +
                         '<div style="Z-INDEX: -4; float:left; background-color:#000000; height:1px; overflow: hidden; width:1px;"></div>' +
-                        '<div style="Z-INDEX: -4; float:right; background-color:#000000; height:1px; overflow: hidden; width:1px;"></div>' +
-                     '</div>' ;
+                        '<div style="Z-INDEX: -4; float:right; background-color:#000000; height:1px; overflow: hidden; width:1px;"></div>' ;
+
+                        if( g.getCaptionType() ) {
+                           vCaptionStr = '';
+                           switch( g.getCaptionType() ) {           
+                              case 'Caption':    vCaptionStr = vTaskList[i].getCaption();  break;
+                              case 'Resource':   vCaptionStr = vTaskList[i].getResource();  break;
+                              case 'Duration':   vCaptionStr = vTaskList[i].getDuration(vFormat);  break;
+                              case 'Complete':   vCaptionStr = vTaskList[i].getCompStr();  break;
+		                     }
+                           //vRightTable += '<div style="FONT-SIZE:12px; position:absolute; left: 6px; top:1px;">' + vCaptionStr + '</div>';
+                           vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:-3px; width:120px; left:' + (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>';
+	                  }
+
+                  vRightTable += '</div>' ;
 
                } else {
 
-                  vRightTable += '<DIV><TABLE style="position:relative; top:0px; width: ' + vChartWidth + 'px;" cellSpacing=0 cellPadding=0 border=0>' +
+                  vDivStr = '<DIV><TABLE style="position:relative; top:0px; width: ' + vChartWidth + 'px;" cellSpacing=0 cellPadding=0 border=0>' +
                      '<TR id=childrow_' + vID + ' class=yesdisplay style="HEIGHT: 20px" bgColor=#ffffff onMouseover=g.mouseOver(this,' + vID + ',"right","row") onMouseout=g.mouseOut(this,' + vID + ',"right","row")>' + vItemRowStr + '</TR></TABLE></DIV>';
-
+                  vRightTable += vDivStr;
+                  
                   // Draw Task Bar  which has outer DIV with enclosed colored bar div, and opaque completion div
-		            vRightTable +=
-                     '<div id=bardiv_' + vID + ' style="position:absolute; top:4px; left:' + Math.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' +
+	            vRightTable +=
+                     '<div id=bardiv_' + vID + ' style="position:absolute; top:4px; left:' + Math.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height:18px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' +
                         '<div id=taskbar_' + vID + ' title="' + vTaskList[i].getName() + ': ' + vDateRowStr + '" class=gtask style="background-color:#' + vTaskList[i].getColor() +'; height: 13px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px; cursor: pointer;opacity:0.9;" ' +
-                           'onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200);>' +
+                           'onclick=JSGantt.taskLink("' + vTaskList[i].getLink() + '",300,200); >' +
                            '<div class=gcomplete style="Z-INDEX: -4; float:left; background-color:black; height:5px; overflow: auto; margin-top:4px; filter: alpha(opacity=40); opacity:0.4; width:' + vTaskList[i].getCompStr() + '; overflow:hidden">' +
                            '</div>' +
                         '</div>';
@@ -763,9 +794,11 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
                               case 'Complete':   vCaptionStr = vTaskList[i].getCompStr();  break;
 		                     }
                            //vRightTable += '<div style="FONT-SIZE:12px; position:absolute; left: 6px; top:-3px;">' + vCaptionStr + '</div>';
-                           vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:-3px; width:120px; left:' + (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px"><span style="nowrap">' + vCaptionStr + '</nowrap></div>';
-		                  }
+                           vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:-3px; width:120px; left:' + (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>';
+	                  }
                   vRightTable += '</div>' ;
+
+                  
 
                }
             }
@@ -1545,7 +1578,7 @@ JSGantt.ChromeXMLParse = function (pGanttVar){
 			if(te.length> 2){var pCaption=te[1];} else {var pCaption = "";}
 			
 			// Finally add the task
-			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend,pCaption));
+			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend,p 	));
 		}
 	}
 }
