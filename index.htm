@@ -58,7 +58,7 @@
 
  
   <TR>
-    <TD bgcolor="#0061ce" style="padding-top:5px; padding-bottom:5px;"><FONT face="Arial,Helvetica" size="5" color="#FFFFFF"><I><STRONG>&nbsp;&nbsp;jsGantt - 1.0</STRONG></I></FONT></TD>
+    <TD bgcolor="#0061ce" style="padding-top:5px; padding-bottom:5px;"><FONT face="Arial,Helvetica" size="5" color="#FFFFFF"><I><STRONG>&nbsp;&nbsp;jsGantt - 1.1</STRONG></I></FONT></TD>
 
   </TR>
    <TR><TD bgcolor="#CFCFCF" style="height:3px;"></TD></TR>
@@ -147,7 +147,7 @@
 <strong>Basic Features</strong><BR>
 <ul>
 <li>Tasks & Collapsible Task Groups</li>
-<li>Dependencies</li>
+<li>Multiple Dependencies</li>
 <li>Task Completion</li>
 <li>Task Color</li>
 <li>Milestones</li>
@@ -192,12 +192,14 @@ Current Issues:
 <li>Currently only one gantt chart is allowed per page. </li>
 
 </ol><br>
-Fixed:
+New in 1.1:
 <ul>
-<li>11/02/08 - DOCTYPE issue fixed</li>
-<li>09/30/08 - Collapsing groups does not always collapse subgroups</li>
-<li>09/28/08 - Switching between day/week/month expands chart</li>
-<li>09/27/08 - XML parsing in Chrome</li>
+<li>Multiple task dependencies</li>
+<li>International date format</li>
+<li>Task Captions</li>
+<li>Task start and end date display</li>
+<li>Highlight current day</li>
+<li>Quarterly view</li>
 </ul>
 <BR>
 <div style="width:400px;">
@@ -418,7 +420,7 @@ g.DrawDependencies();
 
 <br><br>
 Final code should look like
-<textarea name="textarea" cols="150" rows="20">
+<textarea name="textarea2" cols="150" rows="20">
 &lt;link rel="stylesheet" type="text/css" href="jsgantt.css" /&gt;
 &lt;script language="javascript" src="jsgantt.js"&gt;&lt;/script&gt;
 &lt;div style="position:relative" class="gantt" id="GanttChartDIV"&gt;&lt;/div&gt;
