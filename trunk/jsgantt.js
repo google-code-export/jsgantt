@@ -492,7 +492,7 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
 
   	         if(vFormat == 'day')
             {
-			      vRightTable += '<td class=gdatehead style="FONT-SIZE: 12px; HEIGHT: 19px;" align=center colspan=7>' +
+			      vRightTable += '<td class=gdatehead style="FONT-SIZE: 12px; HEIGHT: 19px;" align=center colspan=7 nowrap>' +
 			      JSGantt.formatDateStr(vTmpDate,vDateDisplayFormat.substring(0,5)) + ' - ';
                vTmpDate.setDate(vTmpDate.getDate()+6);
 		         vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</td>';
