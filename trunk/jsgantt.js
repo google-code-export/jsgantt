@@ -171,12 +171,12 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       var vShowDur  = 1;
       var vShowComp = 1;
       var vShowStartDate = 1;
-	   var vShowEndDate = 1;
+      var vShowEndDate = 1;
       var vDateInputFormat = "mm/dd/yyyy";
       var vDateDisplayFormat = "mm/dd/yy";
 	   var vNumUnits  = 0;
       var vCaptionType;
-      var gr = new Graphics('rightside');
+      var vDepId = 1;
       var vTaskList     = new Array();		
       var vQuarterArr   = new Array(1,1,1,2,2,2,3,3,3,4,4,4);
       var vMonthDaysArr = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
@@ -233,78 +233,143 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       }
 
       this.getList   = function() { return vTaskList };
-      this.getGraphics = function() {return gr;};
+
+      this.clearDependencies = function()
+      {
+         var parent = document.getElementById('rightside');
+         var depLine;
+         var vMaxId = vDepId;
+         for ( i=1; i<vMaxId; i++ ) {
+            depLine = document.getElementById("line"+i);
+            if (depLine) { parent.removeChild(depLine); }
+         }
+         vDepId = 1;
+      }
+
+
+      // sLine: Draw a straight line (colored one-pixel wide DIV), need to parameterize doc item
+      this.sLine = function(x1,y1,x2,y2) {
+
+         vLeft = Math.min(x1,x2);
+         vTop  = Math.min(y1,y2);
+         vWid  = Math.abs(x2-x1) + 1;
+         vHgt  = Math.abs(y2-y1) + 1;
+
+         vDoc = document.getElementById('rightside');
+
+	 // retrieve DIV
+	 var oDiv = document.createElement('div');
+
+	 oDiv.id = "line"+vDepId++;
+         oDiv.style.position = "absolute";
+	 oDiv.style.margin = "0px";
+	 oDiv.style.padding = "0px";
+	 oDiv.style.overflow = "hidden";
+	 oDiv.style.border = "0px";
+
+	 // set attributes
+	 oDiv.style.zIndex = 0;
+	 oDiv.style.backgroundColor = "red";
+	
+	 oDiv.style.left = vLeft + "px";
+	 oDiv.style.top = vTop + "px";
+	 oDiv.style.width = vWid + "px";
+	 oDiv.style.height = vHgt + "px";
+
+	 oDiv.style.visibility = "visible";
+	
+	 vDoc.appendChild(oDiv);
+
+      }
+
+
+      // dLine: Draw a diaganol line (calc line x,y paisrs and draw multiple one-by-one sLines)
+      this.dLine = function(x1,y1,x2,y2) {
+
+         var dx = x2 - x1;
+         var dy = y2 - y1;
+         var x = x1;
+         var y = y1;
+
+         var n = Math.max(Math.abs(dx),Math.abs(dy));
+         dx = dx / n;
+         dy = dy / n;
+         for ( i = 0; i <= n; i++ )
+         {
+            vx = Math.round(x); 
+            vy = Math.round(y);
+            this.sLine(vx,vy,vx,vy);
+            x += dx;
+            y += dy;
+         }
+
+      }
 
       this.drawDependency =function(x1,y1,x2,y2)
       {
-         var gr = this.getGraphics();
- 	      gr.penColor = "red";
-	      if(x1 + 10 < x2)
-	      { 
-	         gr.drawLine(x1,y1,x1+4,y1);
- 	         gr.drawLine(x1+4,y1,x1+4,y2);
-	         gr.drawLine(x1+4,y2,x2,y2);
-	         gr.drawLine(x2,y2,x2-3,y2-3);
-	         gr.drawLine(x2,y2,x2-3,y2+3);
-	         gr.drawLine(x2-1,y2,x2-3,y2-2);
-	         gr.drawLine(x2-1,y2,x2-3,y2+2);
-	      }
-	      else
-	      {
-	         //var Xpoints = new Array(x1,x1+5,   x1+5,   x2-5,    x2-5,x2);
-	         //var Ypoints = new Array(y1,y1,   y2-5,    y2-5,    y2,y2);
-	         gr.drawLine(x1,y1,x1+4,y1);
-	         gr.drawLine(x1+4,y1,x1+4,y2-10);
-	         gr.drawLine(x1+4,y2-10,x2-8,y2-10);
-	         gr.drawLine(x2-8,y2-10,x2-8,y2);
-	         gr.drawLine(x2-8,y2,x2,y2);
-	         gr.drawLine(x2,y2,x2-3,y2-3);
-	         gr.drawLine(x2,y2,x2-3,y2+3);
-	         gr.drawLine(x2-1,y2,x2-3,y2-2);
-	         gr.drawLine(x2-1,y2,x2-3,y2+2);
-	      }
-	   }
-
-	this.DrawDependencies = function ()
-   {
-		//First recalculate the x,y
-
-		this.CalcTaskXY();
-
-		var gr = this.getGraphics();
-		gr.clear();
-
-	  	var vList = this.getList();
-
-      for(var i = 0; i < vList.length; i++)
-      {
-
-         vDepend = vList[i].getDepend();
-         if(vDepend) {
-         
-            var vDependStr = vDepend + '';
-            var vDepList = vDependStr.split(',');
-            var n = vDepList.length;
-
-            for(var k=0;k<n;k++) {
-			      var vTask = this.getArrayLocationByID(vDepList[k]);
-
-			      if(vList[vTask].getVisible()==1)
-			         this.drawDependency(vList[vTask].getEndX(),vList[vTask].getEndY(),vList[i].getStartX()-1,vList[i].getStartY())
-            }
-  		   }
+         if(x1 + 10 < x2)
+         { 
+            this.sLine(x1,y1,x1+4,y1);
+            this.sLine(x1+4,y1,x1+4,y2);
+            this.sLine(x1+4,y2,x2,y2);
+            this.dLine(x2,y2,x2-3,y2-3);
+            this.dLine(x2,y2,x2-3,y2+3);
+            this.dLine(x2-1,y2,x2-3,y2-2);
+            this.dLine(x2-1,y2,x2-3,y2+2);
+         }
+         else
+         {
+            this.sLine(x1,y1,x1+4,y1);
+            this.sLine(x1+4,y1,x1+4,y2-10);
+            this.sLine(x1+4,y2-10,x2-8,y2-10);
+            this.sLine(x2-8,y2-10,x2-8,y2);
+            this.sLine(x2-8,y2,x2,y2);
+            this.dLine(x2,y2,x2-3,y2-3);
+            this.dLine(x2,y2,x2-3,y2+3);
+            this.dLine(x2-1,y2,x2-3,y2-2);
+            this.dLine(x2-1,y2,x2-3,y2+2);
+         }
       }
-	}
 
-	this.getArrayLocationByID = function(pId)  {
+      this.DrawDependencies = function () {
 
- 	   var vList = this.getList();
-	   for(var i = 0; i < vList.length; i++)
-	   {
-	      if(vList[i].getID()==pId)
-	      return i;
-	   }
-	}
+         //First recalculate the x,y
+         this.CalcTaskXY();
+
+  	 this.clearDependencies();
+
+         var vList = this.getList();
+         for(var i = 0; i < vList.length; i++)
+         {
+
+            vDepend = vList[i].getDepend();
+            if(vDepend) {
+         
+               var vDependStr = vDepend + '';
+               var vDepList = vDependStr.split(',');
+               var n = vDepList.length;
+
+               for(var k=0;k<n;k++) {
+                  var vTask = this.getArrayLocationByID(vDepList[k]);
+
+                  if(vList[vTask].getVisible()==1)
+                     this.drawDependency(vList[vTask].getEndX(),vList[vTask].getEndY(),vList[i].getStartX()-1,vList[i].getStartY())
+               }
+  	    }
+         }
+      }
+
+
+      this.getArrayLocationByID = function(pId)  {
+
+         var vList = this.getList();
+         for(var i = 0; i < vList.length; i++)
+         {
+            if(vList[i].getID()==pId)
+               return i;
+         }
+      }
+
 
    this.Draw = function()
    {
@@ -367,8 +432,8 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
          vDayWidth = (vColWidth / vColUnit) + (1/vColUnit);
 
          vMainTable =
-            "<TABLE id=theTable cellSpacing=0 cellPadding=0 border=0><TBODY><TR>" +
-            "<TD vAlign=top bgColor=#ffffff>";
+            '<TABLE id=theTable cellSpacing=0 cellPadding=0 border=0><TBODY><TR>' +
+            '<TD vAlign=top bgColor=#ffffff>';
 
          if(vShowRes !=1) vNameWidth+=vStatusWidth;
          if(vShowDur !=1) vNameWidth+=vStatusWidth;
@@ -492,7 +557,7 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
 
   	         if(vFormat == 'day')
             {
-			      vRightTable += '<td class=gdatehead style="FONT-SIZE: 12px; HEIGHT: 19px;" align=center colspan=7 nowrap>' +
+			      vRightTable += '<td class=gdatehead style="FONT-SIZE: 12px; HEIGHT: 19px;" align=center colspan=7>' +
 			      JSGantt.formatDateStr(vTmpDate,vDateDisplayFormat.substring(0,5)) + ' - ';
                vTmpDate.setDate(vTmpDate.getDate()+6);
 		         vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</td>';
@@ -1590,149 +1655,3 @@ JSGantt.benchMark = function(pItem){
 }
 
 
-function Graphics(canvas)
-{
-	this.canvas = canvas;
-	this.cache = new Array;
-	this.shapes = new Object;
-	this.nObject = 0;
-
-	// defaults
-	this.penColor = "black";
-	this.zIndex = 0;
-}
-
-
-Graphics.prototype.createPlotElement = function(x,y,w,h) {
-	// detect canvas
-	if ( (this.canvas == undefined) || (this.canvas == "") ) 
-		this.oCanvas = document.body;
-	else 
-		this.oCanvas = document.getElementById(this.canvas);
-
-	// retrieve DIV
-	var oDiv;
-	oDiv = document.createElement('div');
-	this.oCanvas.appendChild(oDiv);
-
-	oDiv.style.position = "absolute";
-	oDiv.style.margin = "0px";
-	oDiv.style.padding = "0px";
-	oDiv.style.overflow = "hidden";
-	oDiv.style.border = "0px";
-
-	// set attributes
-	oDiv.style.zIndex = this.zIndex;
-	oDiv.style.backgroundColor = this.penColor;
-	
-	oDiv.style.left = x + "px";
-	oDiv.style.top = y + "px";
-	oDiv.style.width = w + "px";
-	oDiv.style.height = h + "px";
-
-	oDiv.style.visibility = "visible";
-	
-	return oDiv;
-}
-
-
-Graphics.prototype.releasePlotElement = function(oDiv)
-{
-	oDiv.style.visibility = "hidden";
-	this.cache.push(oDiv);
-}
-
-Graphics.prototype.addShape = function(shape)
-{
-	shape.oGraphics = this;
-	shape.graphicsID = this.nObject;
-	this.shapes[this.nObject] = shape;
-	this.nObject++;
-	shape.draw();
-	return shape;
-}
-
-Graphics.prototype.removeShape = function(shape)
-{
-	if ( (shape instanceof Object) && 
-		(shape.oGraphics == this) && 
-		(this.shapes[shape.graphicsID] == shape) )
-	{
-		shape.undraw();
-		this.shapes[shape.graphicsID] = undefined;
-		shape.oGraphics = undefined;
-	}
-}
-
-Graphics.prototype.clear = function()
-{
-	for ( var i in this.shapes )
-		this.removeShape(this.shapes[i]);
-}
-
-//=============================================================================
-
-// Point
-Graphics.prototype.drawPoint = function(x,y)
-{
-	return this.addShape(new Point(x,y))
-}
-
-function Point(x,y)
-{
-	this.x = x;
-	this.y = y;
-}
-
-Point.prototype.draw = function()
-{
-	this.oDiv = this.oGraphics.createPlotElement(this.x,this.y,1,1);
-}
-
-Point.prototype.undraw = function()
-{
-	this.oGraphics.releasePlotElement(this.oDiv);
-	this.oDiv = undefined;
-}
-
-//=============================================================================
-// Line
-Graphics.prototype.drawLine = function(x1,y1,x2,y2)
-{
-	return this.addShape(new Line(x1,y1,x2,y2))
-}
-
-function Line(x1,y1,x2,y2)
-{
-	this.x1 = x1;
-	this.y1 = y1;
-	this.x2 = x2;
-	this.y2 = y2;
-}
-
-Line.prototype.draw = function()
-{
-	this.plots = new Array;
-
-	var dx = this.x2 - this.x1;
-	var dy = this.y2 - this.y1;
-	var x = this.x1;
-	var y = this.y1;
-
-	var n = Math.max(Math.abs(dx),Math.abs(dy));
-	dx = dx / n;
-	dy = dy / n;
-	for ( i = 0; i <= n; i++ )
-	{
-		this.plots.push(this.oGraphics.createPlotElement(Math.round(x),Math.round(y),1,1));
-		x += dx;
-		y += dy;
-	}
-}
-
-Line.prototype.undraw = function()
-{
-	while ( this.plots.length )
-		this.oGraphics.releasePlotElement(this.plots.pop());
-	this.plots = undefined;
-}
