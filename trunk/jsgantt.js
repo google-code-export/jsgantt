@@ -1,4 +1,4 @@
-/* Copyright (c) 2008, Shlomy Gantz/BlueBrick Inc.
+/* Copyright (c) 2008, Shlomy Gantz BlueBrick Inc.
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -186,10 +186,10 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       this.setShowRes  = function(pShow) { vShowRes  = pShow; };
       this.setShowDur  = function(pShow) { vShowDur  = pShow; };
       this.setShowComp = function(pShow) { vShowComp = pShow; };
-	  this.setShowStartDate = function(pShow) { vShowStartDate = pShow; };
-	  this.setShowEndDate = function(pShow) { vShowEndDate = pShow; };
-	  this.setDateInputFormat = function(pShow) { vDateInutFormat = pShow; };
-	  this.setDateDisplayFormat = function(pShow) { vDateDisplayFormat = pShow; };
+      this.setShowStartDate = function(pShow) { vShowStartDate = pShow; };
+      this.setShowEndDate = function(pShow) { vShowEndDate = pShow; };
+      this.setDateInputFormat = function(pShow) { vDateInutFormat = pShow; };
+      this.setDateDisplayFormat = function(pShow) { vDateDisplayFormat = pShow; };
       this.setCaptionType = function(pType) { vCaptionType = pType };
       this.setFormat = function(pFormat){ 
          vFormat = pFormat; 
@@ -336,7 +336,7 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
          //First recalculate the x,y
          this.CalcTaskXY();
 
-  	 this.clearDependencies();
+         this.clearDependencies();
 
          var vList = this.getList();
          for(var i = 0; i < vList.length; i++)
@@ -401,7 +401,7 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       {
         
 		   // Process all tasks preset parent date and completion %
-         JSGantt.processRows(vTaskList, 0, -1, 1);
+         JSGantt.processRows(vTaskList, 0, -1, 1, 1);
 
          // get overall min/max dates plus padding
          vMinDate = JSGantt.getMinDate(vTaskList, vFormat);
@@ -908,114 +908,62 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
 
 } //GanttChart		
 
-	
+// Recursively process task tree ... set min, max dates of parent tasks and identfy task level.
+JSGantt.processRows = function(pList, pID, pRow, pLevel, pOpen)
+{
 
+   var vMinDate = new Date();
+   var vMaxDate = new Date();
+   var vMinSet  = 0;
+   var vMaxSet  = 0;
+   var vList    = pList;
+   var vLevel   = pLevel;
+   var i        = 0;
+   var vNumKid  = 0;
+   var vCompSum = 0;
+   var vVisible = pOpen;
+   
+   for(i = 0; i < pList.length; i++)
+   {
+      if(pList[i].getParent() == pID) {
 
+         pList[i].setVisible(vVisible);
+         if(vVisible==1 && pList[i].getOpen() == 0) 
+            vVisible = 0;
+            
+         pList[i].setLevel(vLevel);
+         vNumKid++;
 
-
-
-      // Recursively process task tree ... set min, max dates of parent tasks and identfy task level.
-
-JSGantt.processRows = function(pList, pID, pRow, pLevel)
-
-      {
-
-
-
-         var vMinDate = new Date();
-
-         var vMaxDate = new Date();
-
-         var vMinSet  = 0;
-
-         var vMaxSet  = 0;
-
-         var vList    = pList;
-
-         var vLevel   = pLevel;
-
-         var i        = 0;
-
-         var vNumKid  = 0;
-
-         var vCompSum = 0;
-
- 
-
-         for(i = 0; i < pList.length; i++)
-
-         {
-
-
-
-            if(pList[i].getParent() == pID) {
-
-
-
-               pList[i].setLevel(vLevel);
-
-               vNumKid++;
-
-
-
-               if(pList[i].getGroup() == 1) {
-
-                  JSGantt.processRows(vList, pList[i].getID(), i, vLevel+1);
-
-               }
-
-
-
-               if( vMinSet==0 || pList[i].getStart() < vMinDate) {
-
-                  vMinDate = pList[i].getStart();
-
-                  vMinSet = 1;
-
-               }
-
-
-
-               if( vMaxSet==0 || pList[i].getEnd() > vMaxDate) {
-
-                  vMaxDate = pList[i].getEnd();
-
-                  vMaxSet = 1;
-
-               }
-
-               vCompSum += pList[i].getCompVal();
-
-            }
-
+         if(pList[i].getGroup() == 1) {
+            JSGantt.processRows(vList, pList[i].getID(), i, vLevel+1, vVisible);
          }
 
-
-
-         if(pRow >= 0) {
-
-            pList[pRow].setStart(vMinDate);
-
-            pList[pRow].setEnd(vMaxDate);
-
-            pList[pRow].setNumKid(vNumKid);
-
-            pList[pRow].setCompVal(Math.ceil(vCompSum/vNumKid));
-
+         if( vMinSet==0 || pList[i].getStart() < vMinDate) {
+            vMinDate = pList[i].getStart();
+            vMinSet = 1;
          }
 
+         if( vMaxSet==0 || pList[i].getEnd() > vMaxDate) {
+            vMaxDate = pList[i].getEnd();
+            vMaxSet = 1;
+         }
 
+         vCompSum += pList[i].getCompVal();
 
       }
+   }
+
+   if(pRow >= 0) {
+      pList[pRow].setStart(vMinDate);
+      pList[pRow].setEnd(vMaxDate);
+      pList[pRow].setNumKid(vNumKid);
+      pList[pRow].setCompVal(Math.ceil(vCompSum/vNumKid));
+   }
+
+}
 
 
-
-
-
-
-
-      // Used to determine the minimum date of all tasks and set lower bound based on format
-
+// Used to determine the minimum date of all tasks and set lower bound based on format
 JSGantt.getMinDate = function getMinDate(pList, pFormat)  
       {
 
@@ -1234,183 +1182,111 @@ JSGantt.changeFormat =      function(pFormat,ganttObj) {
 
       // Function to open/close and hide/show children of specified task
 
- JSGantt.folder= function (pID,ganttObj) {
+JSGantt.folder= function (pID,ganttObj) {
 
+   var vList = ganttObj.getList();
 
-        var vList = ganttObj.getList();
+   for(i = 0; i < vList.length; i++)
+   {
+      if(vList[i].getID() == pID) {
 
-        for(i = 0; i < vList.length; i++)
+         if( vList[i].getOpen() == 1 ) {
+            vList[i].setOpen(0);
+            JSGantt.hide(pID,ganttObj);
 
-        {
-
-          if(vList[i].getID() == pID) {
-
-              if( vList[i].getOpen() == 1 ) {
-
-  			    vList[i].setOpen(0);
-
-                JSGantt.hide(pID,ganttObj);
-
-                if (JSGantt.isIE()) 
-                  JSGantt.findObj('group_'+pID).innerText = '+';
-                else
-                  JSGantt.findObj('group_'+pID).textContent = '+';
+            if (JSGantt.isIE()) 
+               JSGantt.findObj('group_'+pID).innerText = '+';
+            else
+               JSGantt.findObj('group_'+pID).textContent = '+';
 				
-              } else {
+         } else {
 
-  			    vList[i].setOpen(1);
+            vList[i].setOpen(1);
 
-                JSGantt.show(pID, 1, ganttObj);
+            JSGantt.show(pID, 1, ganttObj);
 
-                if (JSGantt.isIE()) 
+               if (JSGantt.isIE()) 
                   JSGantt.findObj('group_'+pID).innerText = '–';
-                else
+               else
                   JSGantt.findObj('group_'+pID).textContent = '–';
 
-              }
-
-          }
-
-        }
+         }
 
       }
+   }
+}
 
-	
+JSGantt.hide=     function (pID,ganttObj) {
+   var vList = ganttObj.getList();
+   var vID   = 0;
 
-
-
-  JSGantt.hide=     function (pID,ganttObj) {
-
-        var vList = ganttObj.getList();
-
-        var vID   = 0;
-
-        for(var i = 0; i < vList.length; i++)
-
-        {
-
-          if(vList[i].getParent() == pID) {
-
-            vID = vList[i].getID();
-
-            JSGantt.findObj('child_' + vID).style.display = "none";
-
-            JSGantt.findObj('childgrid_' + vID).style.display = "none";
-			
-            vList[i].setVisible(0);
-
-            if(vList[i].getGroup() == 1) 
-
-              JSGantt.hide(vID,ganttObj);
-
-          }
-
-        }
-
+   for(var i = 0; i < vList.length; i++)
+   {
+      if(vList[i].getParent() == pID) {
+         vID = vList[i].getID();
+         JSGantt.findObj('child_' + vID).style.display = "none";
+         JSGantt.findObj('childgrid_' + vID).style.display = "none";
+         vList[i].setVisible(0);
+         if(vList[i].getGroup() == 1) 
+            JSGantt.hide(vID,ganttObj);
       }
 
+   }
+}
 
+// Function to show children of specified task
+JSGantt.show =  function (pID, pTop, ganttObj) {
+   var vList = ganttObj.getList();
+   var vID   = 0;
 
+   for(var i = 0; i < vList.length; i++)
+   {
+      if(vList[i].getParent() == pID) {
+         vID = vList[i].getID();
+         if(pTop == 1) {
+            if (JSGantt.isIE()) { // IE;
 
-
-      // Function to show children of specified task
-
-     JSGantt.show =  function (pID, pTop, ganttObj) {
-
-        var vList = ganttObj.getList();
-
-        var vID   = 0;
-
-        for(var i = 0; i < vList.length; i++)
-
-        {
-
-          if(vList[i].getParent() == pID) {
-
-            vID = vList[i].getID();
-
-            if(pTop == 1) {
-
-              if (JSGantt.isIE()) { // IE;
-
-
-
-                if( JSGantt.findObj('group_'+pID).innerText == '+') {
-
+               if( JSGantt.findObj('group_'+pID).innerText == '+') {
                   JSGantt.findObj('child_'+vID).style.display = "";
-
                   JSGantt.findObj('childgrid_'+vID).style.display = "";
-
                   vList[i].setVisible(1);
-
-                }
-
-
-
-              } else {
-
-
-
-                if( JSGantt.findObj('group_'+pID).textContent == '+') {
-
-                  JSGantt.findObj('child_'+vID).style.display = "";
-
-                  JSGantt.findObj('childgrid_'+vID).style.display = "";
-
-                  vList[i].setVisible(1);
-
-                }
-
-              }
+               }
 
             } else {
-
-              if (JSGantt.isIE()) { // IE;
-
-
-
-                if( JSGantt.findObj('group_'+pID).innerText == '–') {
-
+ 
+               if( JSGantt.findObj('group_'+pID).textContent == '+') {
                   JSGantt.findObj('child_'+vID).style.display = "";
-
                   JSGantt.findObj('childgrid_'+vID).style.display = "";
-
                   vList[i].setVisible(1);
-
-                }
-
-
-
-              } else {
-
-
-
-                if( JSGantt.findObj('group_'+pID).textContent == '–') {
-
-                  JSGantt.findObj('child_'+vID).style.display = "";
-
-                  JSGantt.findObj('childgrid_'+vID).style.display = "";
-
-                  vList[i].setVisible(1);
-
-                }
-
-              }
+               }
 
             }
 
+         } else {
 
-            if(vList[i].getGroup() == 1) 
+            if (JSGantt.isIE()) { // IE;
+               if( JSGantt.findObj('group_'+pID).innerText == '–') {
+                  JSGantt.findObj('child_'+vID).style.display = "";
+                  JSGantt.findObj('childgrid_'+vID).style.display = "";
+                  vList[i].setVisible(1);
+               }
 
-              JSGantt.show(vID, 0,ganttObj);
+            } else {
 
+               if( JSGantt.findObj('group_'+pID).textContent == '–') {
+                  JSGantt.findObj('child_'+vID).style.display = "";
+                  JSGantt.findObj('childgrid_'+vID).style.display = "";
+                  vList[i].setVisible(1);
+               }
+            }
+         }
 
+         if(vList[i].getGroup() == 1) 
+            JSGantt.show(vID, 0,ganttObj);
 
-          }
-
-        }
- 
       }
+   }
+}
 
 
   
