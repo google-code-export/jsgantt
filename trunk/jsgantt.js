@@ -188,7 +188,7 @@ JSGantt.GanttChart =  function(pGanttVar, pDiv, pFormat)
       this.setShowComp = function(pShow) { vShowComp = pShow; };
       this.setShowStartDate = function(pShow) { vShowStartDate = pShow; };
       this.setShowEndDate = function(pShow) { vShowEndDate = pShow; };
-      this.setDateInputFormat = function(pShow) { vDateInutFormat = pShow; };
+      this.setDateInputFormat = function(pShow) { vDateInputFormat = pShow; };
       this.setDateDisplayFormat = function(pShow) { vDateDisplayFormat = pShow; };
       this.setCaptionType = function(pType) { vCaptionType = pType };
       this.setFormat = function(pFormat){ 
