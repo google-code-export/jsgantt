@@ -35,6 +35,13 @@ Customize the look and feel using the following setters
 g.setShowRes(1); // Show/Hide Responsible (0/1)
 g.setShowDur(1); // Show/Hide Duration (0/1)
 g.setShowComp(1); // Show/Hide % Complete(0/1)
+g.setCaptionType('Resource');  // Set to Show Caption (None,Caption,Resource,Duration,Complete)
+g.setShowStartDate(1); // Show/Hide Start Date(0/1)
+g.setShowEndDate(1); // Show/Hide End Date(0/1)
+g.setDateInputFormat('mm/dd/yyyy')  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', 'yyyy-mm-dd')
+g.setDateDisplayFormat('mm/dd/yyyy') // Set format to display dates ('mm/dd/yyyy', 'dd/mm/yyyy', 'yyyy-mm-dd')
+g.setFormatArr("day","week","month","quarter") // Set format options (up to 4 : "minute","hour","day","week","month","quarter")
+
 }}}
 ===5. Add Tasks using AddTaskItem()===
 
@@ -48,7 +55,7 @@ pID: (required) is a unique ID used to identify each row for parent functions an
 
 pName: (required) is the task Label
 
-pStart: (required) the task start date, can enter empty date ('') for groups
+pStart: (required) the task start date, can enter empty date ('') for groups. You can also enter specific time (2/10/2008 12:00) for additional percision or half days.
 
 pEnd: (required) the task end date, can enter empty date ('') for groups
 
