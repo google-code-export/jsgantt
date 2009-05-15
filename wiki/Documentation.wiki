@@ -14,7 +14,7 @@
 <div style="position:relative" class="gantt" id="GanttChartDIV"></div>
 }}}
 
-===3. Start a <script> block===
+===3. Start a &lt;script&gt; block===
 {{{
 <script language="javascript">
 }}}
