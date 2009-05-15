@@ -102,7 +102,7 @@
 
   if( g ) {
 
-    // Parameters             (pID, pName,                  pStart,      pEnd,        pColor,   pLink,          pMile, pRes,  pComp, pGroup, pParent, pOpen)
+    // Parameters             (pID, pName,                  pStart,      pEnd,        pColor,   pLink,          pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend, pCaption)
 	
 	// You can also use the XML file parser JSGantt.parseXML('project.xml',g)
 
@@ -111,9 +111,8 @@
     g.AddTaskItem(new JSGantt.TaskItem(12,  'Task Objects',         '',          '',          '00ff00', '', 0, 'Shlomy',   40, 1, 1, 1));
     g.AddTaskItem(new JSGantt.TaskItem(121, 'Constructor Proc',     '7/21/2008', '8/9/2008',  '00ffff', 'http://www.yahoo.com', 0, 'Brian T.', 60, 0, 12, 1));
     g.AddTaskItem(new JSGantt.TaskItem(122, 'Task Variables',       '8/6/2008',  '8/11/2008', 'ff0000', 'http://help.com', 0, 'Brian',         60, 0, 12, 1,121));
-	 g.AddTaskItem(new JSGantt.TaskItem(122, 'Task by Minute/Hour',       '8/6/2008',  '8/11/2008 12:00', 'ffff00', 'http://help.com', 0, 'Ilan',         60, 0, 12, 1,121));
-   
-    g.AddTaskItem(new JSGantt.TaskItem(123, 'Task Functions',       '8/9/2008',  '8/29/2008', 'ff0000', 'http://help.com', 0, 'Anyone',   60, 0, 12, 1, 0, 'This is another caption'));
+	g.AddTaskItem(new JSGantt.TaskItem(123, 'Task by Minute/Hour',       '8/6/2008',  '8/11/2008 12:00', 'ffff00', 'http://help.com', 0, 'Ilan',         60, 0, 12, 1,121));
+    g.AddTaskItem(new JSGantt.TaskItem(124, 'Task Functions',       '8/9/2008',  '8/29/2008', 'ff0000', 'http://help.com', 0, 'Anyone',   60, 0, 12, 1, 0, 'This is another caption'));
     g.AddTaskItem(new JSGantt.TaskItem(2,   'Create HTML Shell',    '8/24/2008', '8/25/2008', 'ffff00', 'http://help.com', 0, 'Brian',    20, 0, 0, 1,122));
     g.AddTaskItem(new JSGantt.TaskItem(3,   'Code Javascript',      '',          '',          'ff0000', 'http://help.com', 0, 'Brian',     0, 1, 0, 1 ));
     g.AddTaskItem(new JSGantt.TaskItem(31,  'Define Variables',     '7/25/2008', '8/17/2008', 'ff00ff', 'http://help.com', 0, 'Brian',    30, 0, 3, 1, '','Caption 1'));

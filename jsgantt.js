@@ -1051,7 +1051,7 @@ JSGantt.processRows = function(pList, pID, pRow, pLevel, pOpen)
    for(i = 0; i < pList.length; i++)
    {
       if(pList[i].getParent() == pID) {
-
+		 vVisible = pOpen;
          pList[i].setVisible(vVisible);
          if(vVisible==1 && pList[i].getOpen() == 0) 
             vVisible = 0;
@@ -1675,7 +1675,7 @@ JSGantt.ChromeXMLParse = function (pGanttVar){
 			if(te.length> 2){var pCaption=te[1];} else {var pCaption = "";}
 			
 			// Finally add the task
-			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend,p 	));
+			pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID , pName, pStart, pEnd, pColor,  pLink, pMile, pRes,  pComp, pGroup, pParent, pOpen, pDepend,pCaption 	));
 		}
 	}
 }
