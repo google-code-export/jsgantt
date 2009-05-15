@@ -1592,8 +1592,8 @@ JSGantt.AddXMLTask = function(pGanttVar){
 
 			try { pDepend = Task[i].getElementsByTagName("pDepend")[0].childNodes[0].nodeValue;
 			} catch (error) { pDepend =0;}
-			pDepend *= 1;
-			if (pDepend==0){pDepend=''} // need this to draw the dependency lines
+			//pDepend *= 1;
+			if (pDepend.length==0){pDepend=''} // need this to draw the dependency lines
 			
 			try { pCaption = Task[i].getElementsByTagName("pCaption")[0].childNodes[0].nodeValue;
 			} catch (error) { pCaption ="";}
@@ -1668,8 +1668,8 @@ JSGantt.ChromeXMLParse = function (pGanttVar){
 	
 			var te = Task.split(/<pDepend>/i)
 			if(te.length> 2){var pDepend=te[1];} else {var pDepend = "";}	
-			pDepend *= 1;
-			if (pDepend==0){pDepend=''} // need this to draw the dependency lines
+			//pDepend *= 1;
+			if (pDepend.length==0){pDepend=''} // need this to draw the dependency lines
 			
 			var te = Task.split(/<pCaption>/i)
 			if(te.length> 2){var pCaption=te[1];} else {var pCaption = "";}
