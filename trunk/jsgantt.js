@@ -1132,12 +1132,9 @@ Complete-Displays task percent complete</p>
             
   	         if(vFormat == 'day')
             {
-			      vRightTable += '<td class=gdatehead style="FONT-SIZE: 12px; HEIGHT: 19px;" align=center colspan=7>';
-			     
-				 if(vDateDisplayFormat=='yyyy-mm-dd')
-				 {vRightTable += (vTmpDate.getMonth()+1) + '-' + (vTmpDate.getDate()) + ' - ';}
-				 else
-				 {vRightTable += JSGantt.formatDateStr(vTmpDate,vDateDisplayFormat.substring(0,5)) + ' - ';}
+			      vRightTable += '<td class=gdatehead style="FONT-SIZE: 12px; HEIGHT: 19px;" align=center colspan=7>' +
+				   JSGantt.formatDayMonthDateStr(vTmpDate,vDateDisplayFormat) + ' - ';
+
 				 
                vTmpDate.setDate(vTmpDate.getDate()+6);
 		         vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</td>';
@@ -2309,4 +2306,43 @@ JSGantt.benchMark = function(pItem){
    alert(pItem + ': Elapsed time: '+((vEndTime-vBenchTime)/1000)+' seconds.');
    vBenchTime=new Date().getTime();
 };
+
+/**
+* Returns day and month for header (Created by karsten)
+*
+* @method formatDayMonthDateStr
+* @param pDate {Date} - Date object
+* @param pFormatStr {String} - Current gantt date format 
+* @return {void}
+*/
+JSGantt.formatDayMonthDateStr = function(pDate,pFormatStr) {
+       vYear4Str = pDate.getFullYear() + '';
+ 	   vYear2Str = vYear4Str.substring(2,4);
+       vMonthStr = (pDate.getMonth()+1) + '';
+       vDayStr   = pDate.getDate() + '';
+
+      var vDateStr = "";	
+
+      switch(pFormatStr) {
+	        case 'mm/dd/yyyy':
+               return( vMonthStr + '/' + vDayStr );
+	        case 'dd/mm/yyyy':
+               return( vDayStr + '/' + vMonthStr );
+	        case 'dd.mm.yyyy':
+               return( vDayStr + '.' + vMonthStr );
+	        case 'yyyy-mm-dd':
+               return( vMonthStr + '-' + vDayStr );
+	        case 'mm/dd/yy':
+               return( vMonthStr + '/' + vDayStr );
+	        case 'dd/mm/yy':
+               return( vDayStr + '/' + vMonthStr );
+	        case 'yy-mm-dd':
+               return( vMonthStr + '-' + vDayStr );
+	        case 'mm/dd':
+               return( vMonthStr + '/' + vDayStr );
+	        case 'dd/mm':
+               return( vDayStr + '/' + vMonthStr );
+      }		 
+	  
+}
 
